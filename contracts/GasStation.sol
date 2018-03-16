@@ -20,32 +20,6 @@ contract GasStation is Ownable {
 	// default function
 	function() payable public {}
 
-	// // exchange by client ( hash signed by gasstation )
-	// function pullFill(address _token_address, uint _valid_until, uint _random, uint _tokenAmount, uint _gasAmount, uint8 _v, bytes32 _r, bytes32 _s) public {
-
-	//   bytes32 hash = sha256(_token_address, this, msg.sender, _tokenAmount,_gasAmount, _valid_until, _random);
-
-	// 	NewHash(hash, _token_address, this, _tokenAmount, _gasAmount, _valid_until, _random);
-
-	// 	require (
-	// 		usedhashes[hash] != true
-	// 		&& (ecrecover(hash, _v, _r, _s) == owner)
-	// 		&& block.number <= _valid_until
-	// 	);
-
-	// 	// claim tokens
-	// 	ERC20 token = ERC20(_token_address);
-
-	// 	require(token.transferFrom(msg.sender,gasStationSigner,_gasAmount));
-
-	// 	// send ETH (gas)
-	// 	msg.sender.transfer(_tokenAmount);
-
-	// 	// invalidate this deal's hash
-	// 	usedhashes[hash] = true;
-
-	// }
-
 	// swap tokens for gas
 	function purchaseGas(address _token_address, address _client, uint _valid_until, uint _tokenAmount, uint _gasAmount, uint8 _v, bytes32 _r, bytes32 _s) public {
 
@@ -57,7 +31,6 @@ contract GasStation is Ownable {
 			&& (
 			 	// the parameters are only accepted when signed by the other party
 			 	(msg.sender == gasStationSigner && ecrecover(hash, _v, _r, _s) == _client)
-			// 	|| (msg.sender == _client && ecrecover(hash, _v, _r, _s) == gasStationSigner)
 			 )
 			&& block.number <= _valid_until 
 		);
