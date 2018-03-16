@@ -1,4 +1,3 @@
-//const sha3 = require('web3-utils/src/soliditySha3.js');
 const sha256 = require('js-sha256').sha256;
 const Tx = require('ethereumjs-tx');
 const ethUtil = require('ethereumjs-util');
@@ -7,8 +6,6 @@ const ERC20 = require('./build/contracts/ERC20.json');
 const GasStation = require('./build/contracts/GasStation.json');
 const Web3 = require('web3');
 const EthereumTx = require('ethereumjs-tx');
-
-//const BigNumber = Web3.utils.BN; //require('bignumber.js');
 
 module.exports = (config) => {
 	const utility = {};
@@ -23,119 +20,6 @@ module.exports = (config) => {
 			v: sig.v,
 		});
 	}
-
-	// // main -> side
-	// utility.signMintRequest = function(txHash, tokenAddress, tokenOwner, tokenAmount, validatorPK) {
-	// 	const condensed = utility.pack(
-	// 		[
-	// 			txHash,
-	// 			tokenAddress,
-	// 			tokenOwner,
-	// 			tokenAmount
-	// 		], [256, 160, 160, 256]);
-	// 	const hash = sha256(new Buffer(condensed, 'hex'));
-	// 	return utility.simpleSign(hash, validatorPK);
-	// };
-
-	// utility.createWithdrawRequestHash = function(tokenAddress, tokenOwner, tokenAmount, withdrawBlock) {
-	// 	const condensed = utility.pack(
-	// 		[
-	// 			tokenAddress,
-	// 			tokenOwner,
-	// 			tokenAmount,
-	// 			withdrawBlock
-	// 		], [160, 160, 256, 256]);
-	// 	return (sha256(new Buffer(condensed, 'hex')));
-	// }
-
-	// utility.signWithdrawRequest = function(tokenAddress, tokenOwner, tokenAmount, withdrawBlock, validatorPK) {
-	// 	const hash = utility.createWithdrawRequestHash(tokenAddress, tokenOwner, tokenAmount, withdrawBlock);
-	// 	return utility.simpleSign(hash, validatorPK);
-	// };
-
-	// utility.signReward = function(withdrawRequestHash,tokenAddress, tokenOwner, tokenAmount, withdrawBlock, tokenReward, tokenOwnerPK) {
-	// 	condensed = utility.pack(
-	// 		[
-	//        withdrawRequestHash,
-	// 			tokenAddress,
-	// 			tokenOwner,
-	// 			tokenAmount,
-	// 			withdrawBlock,
-	// 			tokenReward,
-	// 		], [256,160, 160, 256, 256, 256]);
-	// 	const hash = sha256(new Buffer(condensed, 'hex'));
-	// 	return utility.simpleSign(hash, tokenOwnerPK);
-	// };
-
-	// utility.sign = function sign(address, msgToSignIn, privateKeyIn, callback) {
-	// 	let msgToSign = msgToSignIn;
-	// 	if (msgToSign.substring(0, 2) !== '0x') msgToSign = `0x${msgToSign}`;
-
-	// 	function prefixMessage(msgIn) {
-	// 		let msg = msgIn;
-	// 		msg = new Buffer(msg.slice(2), 'hex');
-	// 		msg = Buffer.concat([
-	// 			new Buffer(`\x19Ethereum Signed Message:\n${msg.length.toString()}`),
-	// 			msg
-	// 		]);
-	// 		//console.log('MSG TO BE HASHED 1', msg.toString('hex'));
-
-	// 		msg = sha3(`0x${msg.toString('hex')}`, {
-	// 			encoding: 'hex'
-	// 		});
-	// 		msg = new Buffer((msg.substring(0, 2) === '0x') ? msg.slice(2) : msg, 'hex');
-	// 		return `0x${msg.toString('hex')}`;
-	// 	}
-
-	// 	function testSig(msg, sig) {
-	// 		const recoveredAddress =
-	// 			`0x${ethUtil.pubToAddress(ethUtil.ecrecover(msg, sig.v, sig.r, sig.s)).toString('hex')}`;
-	// 		return recoveredAddress === address;
-	// 	}
-	// 	//if (privateKeyIn) {
-	// 	let privateKey = privateKeyIn;
-	// 	if (privateKey.substring(0, 2) === '0x') privateKey = privateKey.substring(2, privateKey.length);
-	// 	msgToSign = prefixMessage(msgToSign);
-	// 	try {
-	// 		const sig = ethUtil.ecsign(
-	// 			new Buffer(msgToSign.slice(2), 'hex'),
-	// 			new Buffer(privateKey, 'hex'));
-	// 		const r = `0x${sig.r.toString('hex')}`;
-	// 		const s = `0x${sig.s.toString('hex')}`;
-	// 		const v = sig.v;
-	// 		const result = {
-	// 			r,
-	// 			s,
-	// 			v
-	// 		};
-	// 		callback(undefined, result);
-	// 	} catch (err) {
-	// 		callback(err, undefined);
-	// 	}
-
-	// };
-
-	// utility.verify = function verify(addressIn, // eslint-disable-line consistent-return
-	// 	v, rIn, sIn, valueIn, callback) {
-	// 	const address = addressIn.toLowerCase();
-	// 	let r = rIn;
-	// 	let s = sIn;
-	// 	let value = valueIn;
-	// 	if (r.substring(0, 2) === '0x') r = r.substring(2, r.length);
-	// 	if (s.substring(0, 2) === '0x') s = s.substring(2, s.length);
-	// 	if (value.substring(0, 2) === '0x') value = value.substring(2, value.length);
-	// 	const pubKey = ethUtil.ecrecover(
-	// 		new Buffer(value, 'hex'),
-	// 		Number(v),
-	// 		new Buffer(r, 'hex'),
-	// 		new Buffer(s, 'hex'));
-	// 	const result = address === `0x${ethUtil.pubToAddress(new Buffer(pubKey, 'hex')).toString('hex')}`;
-	// 	if (callback) {
-	// 		callback(undefined, result);
-	// 	} else {
-	// 		return result;
-	// 	}
-	// };
 
 	utility.signGastankParameters = function(tokenaddress, gastankaddress, tokenAmount, gasAmount, valid_until, privatekey) {
 		const condensed = utility.pack(
@@ -211,21 +95,11 @@ module.exports = (config) => {
 			console.log('gasStationAddress=', gasStationAddress);
 			const gasStationInstance = new web3.eth.Contract(GasStation.abi, gasStationAddress);
 
-			//const purchaseGasMethod = 
-
 			Promise.all([
 				web3.eth.getGasPrice(),
 				web3.eth.getTransactionCount(from),
 				web3.eth.net.getId(),
-				// gasStationInstance.methods.purchaseGas(
-				// 	tokenAddress,
-				// 	gasstation_client,
-				// 	valid_until,
-				// 	_tokensGive,
-				// 	gasOffer,
-				// 	v,
-				// 	r,
-				// 	s).estimateGas(),
+				
 			]).then((res) => {
 				const gasPrice = parseInt(res[0]);
 				const gasLimit = 200000; //res[3];
@@ -255,51 +129,6 @@ module.exports = (config) => {
 				});
 			});
 		});
-
-
-		// web3.eth.estimateGas({
-		// 	to: token_address,
-		// 	data: txData,
-		// 	from: from
-		// }, function(err, res) {
-		// 	if (err) {
-		// 		return cb(err);
-		// 	}
-		// 	var gasRequired = res;
-
-		// 	// get nonce
-		// 	web3.eth.getTransactionCount(from, function(err, nonce) {
-
-		// 		if (!nonce) {
-		// 			nonce = 0;
-		// 		}
-
-		// 		var txParams = {
-		// 			nonce: nonce++,
-		// 			gasPrice: gasprice,
-		// 			gasLimit: gasRequired,
-		// 			to: token_address,
-		// 			from: from,
-		// 			data: txData,
-		// 			chainId: 1
-		// 		};
-
-		// 		var tx = new Tx(txParams);
-		// 		tx.sign(new Buffer(from_pk.slice(2), 'hex'));
-
-		// 		//var serializedTx = tx.serialize();
-
-		// 		return cb(null, {
-		// 			signedtx: `0x${tx.serialize().toString('hex')}`,
-		// 			cost: txParams.gasPrice * txParams.gasLimit
-		// 		});
-
-
-		// 	});
-
-		// });
-
-		// //    return txData;
 	};
 
 	utility.zeroPad = function zeroPad(num, places) {
