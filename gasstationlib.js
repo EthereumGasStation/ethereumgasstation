@@ -1,7 +1,6 @@
 const sha256 = require('js-sha256').sha256;
 const Tx = require('ethereumjs-tx');
 const ethUtil = require('ethereumjs-util');
-const IgasStation = require('./build/contracts/GasStation.json');
 const ERC20 = require('./build/contracts/ERC20.json');
 const GasStation = require('./build/contracts/GasStation.json');
 const Web3 = require('web3');
