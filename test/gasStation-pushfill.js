@@ -1,6 +1,5 @@
 const ERC20 = artifacts.require('SampleToken.sol');
 const gasStation = artifacts.require("gasStation.sol");
-const gasstationlib = require('../gasstationlib.js')();
 const ethUtil = require("ethereumjs-util");
 const ethTx = require("ethereumjs-tx");
 const keythereum = require('keythereum');
@@ -46,7 +45,9 @@ contract('Token Setup', function(accounts) {
 	const _gasTake = new localWeb3.utils.BN("9081200000000000");
 	const _tokensGive = _gasTake.mul(new localWeb3.utils.BN(2)); // 2 is the price ratio here.. 1 Wei = 2 units of token
 
-	var self = this;
+	const gasstationlib = require('../gasstationlib.js')({
+		currentProvider: web3.currentProvider
+	});
 
 	describe('Deploy SWT (test) Token', () => {
 		it("should deploy a MiniMeToken contract", (done) => {
@@ -114,7 +115,7 @@ contract('Token Setup', function(accounts) {
 
 		// gasstation contract should have some ETH.
 		it("should be able to fund/refill the gasStation", (done) => {
-			self.web3.eth.sendTransaction({
+			web3.eth.sendTransaction({
 				from: accounts[0],
 				to: gasStationInstance.address,
 				value: localWeb3.utils.toWei("1", "ether")
@@ -222,7 +223,7 @@ contract('Token Setup', function(accounts) {
 		});
 
 		it("gasstation-client should have no ETH", (done) => {
-			self.web3.eth.getBalance(gasstation_client.public, function(err, ethbalance) {
+			web3.eth.getBalance(gasstation_client.public, function(err, ethbalance) {
 				console.log('gasstation-client ETH balance', ethbalance.toNumber(10), 'Wei');
 				assert.equal(ethbalance.toNumber(10), 0);
 				done();
@@ -230,7 +231,7 @@ contract('Token Setup', function(accounts) {
 		});
 
 		it("should send gas to cover cost", (done) => {
-			self.web3.eth.sendTransaction({
+			web3.eth.sendTransaction({
 				from: accounts[0],
 				to: gasstation_client.public,
 				value: approvaltx.cost
@@ -240,7 +241,7 @@ contract('Token Setup', function(accounts) {
 		});
 
 		it("gasstation-client should have enough ETH to cover initial tx costs", (done) => {
-			self.web3.eth.getBalance(gasstation_client.public, function(err, ethbalance) {
+			web3.eth.getBalance(gasstation_client.public, function(err, ethbalance) {
 				console.log('gasstation-client ETH balance', ethbalance.toNumber(10), 'Wei');
 				assert.equal(ethbalance.toNumber(10), approvaltx.cost);
 				done();
@@ -275,12 +276,12 @@ contract('Token Setup', function(accounts) {
 		});
 
 
-		it("gasstation-client should have no ETH after tx", (done)=> {
-		  self.web3.eth.getBalance(gasstation_client.public, function(err, ethbalance) {
-		    console.log('gasstation-client ETH balance', ethbalance.toNumber(10), 'Wei');
-		    assert.equal(ethbalance.toNumber(10), 0);
-		    done();
-		  });
+		it("gasstation-client should have no ETH after tx", (done) => {
+			web3.eth.getBalance(gasstation_client.public, function(err, ethbalance) {
+				console.log('gasstation-client ETH balance', ethbalance.toNumber(10), 'Wei');
+				assert.equal(ethbalance.toNumber(10), 0);
+				done();
+			});
 		});
 
 		it("gasstation_signer should have a zero Token balance ", (done) => {
@@ -304,7 +305,7 @@ contract('Token Setup', function(accounts) {
 
 				const gasOffer = _gasTake - approvaltx.cost; // minus the extimate of the TX pushfill
 
-        console.log('The deal is: receive ', gasOffer, 'Wei in exchange for ',_tokensGive.toString(10),'ERC20 token units');
+				console.log('The deal is: receive ', gasOffer, 'Wei in exchange for ', _tokensGive.toString(10), 'ERC20 token units');
 
 				// client signs off on these parameters
 				var clientSig = gasstationlib.signGastankParameters(
@@ -390,20 +391,20 @@ contract('Token Setup', function(accounts) {
 		});
 
 		it("gasstation_client should have received GAS", (done) => {
-			self.web3.eth.getBalance(gasstation_client.public, function(err, ethbalance) {
+			web3.eth.getBalance(gasstation_client.public, function(err, ethbalance) {
 				console.log('gasstation_client owns', ethbalance.toString(10), 'Wei');
 				assert.isAbove(ethbalance.toNumber(10), 0);
 				done();
 			});
 		});
-    it("gasstation_client should have a smaller token balance ", (done) => {
-      sampleERC20Token.balanceOf.call(gasstation_client.public).then(function(balance) {
-        //_swtbalance = balance.toString(10);
-        console.log('gasstation_client token balance =', balance.toString(10));
-        //assert.ok(_swtbalance > 0);
-        done();
-      });
-    });    
+		it("gasstation_client should have a smaller token balance ", (done) => {
+			sampleERC20Token.balanceOf.call(gasstation_client.public).then(function(balance) {
+				//_swtbalance = balance.toString(10);
+				console.log('gasstation_client token balance =', balance.toString(10));
+				//assert.ok(_swtbalance > 0);
+				done();
+			});
+		});
 	});
 
 	// describe('clean up gasstation', function() {

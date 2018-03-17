@@ -34,9 +34,9 @@ module.exports = (config) => {
 	};
 
 
-	utility.getapprovaltx = function(from, from_pk, token_address, tokenamount, to, currentProvider) {
+	utility.getapprovaltx = function(from, from_pk, token_address, tokenamount, to) {
 		return new Promise((resolve, reject) => {
-			const web3 = new Web3(currentProvider);
+			const web3 = new Web3(config.currentProvider);
 			const tokenInstance = new web3.eth.Contract(ERC20.abi, token_address);
 
 			Promise.all([
@@ -86,11 +86,10 @@ module.exports = (config) => {
 		r,
 		s,
 		from,
-		from_pk,
-		currentProvider
+		from_pk
 	) {
 		return new Promise((resolve, reject) => {
-			const web3 = new Web3(currentProvider);
+			const web3 = new Web3(config.currentProvider);
 			console.log('gasStationAddress=', gasStationAddress);
 			const gasStationInstance = new web3.eth.Contract(GasStation.abi, gasStationAddress);
 
