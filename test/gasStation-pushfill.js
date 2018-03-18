@@ -400,7 +400,6 @@ contract('Token Setup', function(accounts) {
 
 		var approvaltx;
 
-
 		it("client should be able to sign off on the offer of gas/token ( even without haveing enough tokens )", (done) => {
 			Promise.all([
 				localWeb3.eth.getBlockNumber(),
