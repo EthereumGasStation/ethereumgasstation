@@ -1,5 +1,5 @@
 const ERC20 = artifacts.require('SampleToken.sol');
-const gasStation = artifacts.require("gasStation.sol");
+const gasStation = artifacts.require("GasStation.sol");
 const ethUtil = require("ethereumjs-util");
 const ethTx = require("ethereumjs-tx");
 const keythereum = require('keythereum');
