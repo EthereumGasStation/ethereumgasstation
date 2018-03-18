@@ -39,6 +39,6 @@ contract GasStation is Ownable {
 	}
 
 	function withdrawETH() onlyOwner public {
-		require(owner.send(this.balance));
+		owner.transfer(this.balance);
 	}
 }

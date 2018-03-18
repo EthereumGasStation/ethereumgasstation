@@ -40,7 +40,7 @@ contract('Token Setup', function(accounts) {
 
 	// the signer account who signs off on exchange rates via the API
 	// ( this user cannot withdraw tokens or ETH )
-	var gasstation_signer = randomkeys[2];
+	var gasstation_signer = randomkeys[1];
 
 	// new signer account - to test changing of changeGasStationSigner
 	let gasstation_signer2 = accounts[4];
@@ -71,7 +71,7 @@ contract('Token Setup', function(accounts) {
 		});
 
 		it("should mint tokens for gasstation client ", (done) => {
-			sampleERC20Token.mint(gasstation_client.public, 4 * 1e18, {
+			sampleERC20Token.mint(gasstation_client.public, _tokensGive.toString(10), {
 				from: gasstation_owner
 			}).then(() => {
 				done();
@@ -170,7 +170,7 @@ contract('Token Setup', function(accounts) {
 		// });
 	});
 
-	describe('test transaction on gasstation', function() {
+	describe('test transaction on gasstation - happy flow', function() {
 
 		var approvaltx;
 
@@ -292,56 +292,78 @@ contract('Token Setup', function(accounts) {
 			});
 		});
 
+		let offer = {};
 
-		it("gasstation-signer should be able to do the purchaseGas Tx", (done) => {
+		it("client should be able to sign off on the offer of gas/token", (done) => {
 			Promise.all([
 				localWeb3.eth.getBlockNumber(),
 			]).then((blockNumber) => {
 
-				const valid_until = blockNumber + 10;
+				offer.valid_until = blockNumber + 10;
 
-				const gasOffer = _gasTake - approvaltx.cost; // minus the extimate of the TX pushfill
+				offer.gasOffer = _gasTake - approvaltx.cost; // minus the extimate of the TX pushfill
 
-				console.log('The deal is: receive ', gasOffer, 'Wei in exchange for ', _tokensGive.toString(10), 'ERC20 token units');
+				console.log('The deal is: receive ', offer.gasOffer, 'Wei in exchange for ', _tokensGive.toString(10), 'ERC20 token units');
 
 				// client signs off on these parameters
-				var clientSig = gasstationlib.signGastankParameters(
+				offer.clientSig = gasstationlib.signGastankParameters(
 					sampleERC20Token.address,
 					gasStationInstance.address,
 					_tokensGive,
-					gasOffer,
-					valid_until,
+					offer.gasOffer,
+					offer.valid_until,
 					gasstation_client.private)
-				console.log('clientSig =>', clientSig, 'valid_until=', valid_until);
+				console.log('clientSig =>', offer.clientSig, 'valid_until=', offer.valid_until);
+				done();
+			});
+		});
 
 
-				// server creates & signs purchaseGas Tx
-				gasstationlib.getPurchaseGastx(
-					sampleERC20Token.address,
-					gasstation_client.public,
-					valid_until,
-					_tokensGive,
-					gasOffer,
-					gasStationInstance.address,
-					clientSig.v,
-					clientSig.r,
-					clientSig.s,
-					gasstation_signer.public,
-					gasstation_signer.private,
-					web3.currentProvider
-				).then((purchaseGasTx) => {
 
-					console.log('purchase TX=', purchaseGasTx);
-
-					// and throws it in the Tx pool
-					web3.eth.sendRawTransaction(purchaseGasTx.tx, function(err, res) {
-						console.log('purchase gas - tx sent', err, res);
-						done();
-					});
-
+		it("gasstation-signer should be able to execute purchaseGas Tx", (done) => {
+			// server creates & signs purchaseGas Tx
+			gasstationlib.getPurchaseGastx(
+				sampleERC20Token.address,
+				gasstation_client.public,
+				offer.valid_until,
+				_tokensGive,
+				offer.gasOffer,
+				gasStationInstance.address,
+				offer.clientSig.v,
+				offer.clientSig.r,
+				offer.clientSig.s,
+				gasstation_signer.public,
+				gasstation_signer.private
+			).then((purchaseGasTx) => {
+				// and throws it in the Tx pool
+				localWeb3.eth.sendSignedTransaction(purchaseGasTx.tx).on('receipt', (receipt) => {
+					done();
 				});
+			});
+		});
 
-
+		it("gasstation-signer should not be able to execute the same purchaseGas Tx again", (done) => {
+			// server creates & signs purchaseGas Tx
+			gasstationlib.getPurchaseGastx(
+				sampleERC20Token.address,
+				gasstation_client.public,
+				offer.valid_until,
+				_tokensGive,
+				offer.gasOffer,
+				gasStationInstance.address,
+				offer.clientSig.v,
+				offer.clientSig.r,
+				offer.clientSig.s,
+				gasstation_signer.public,
+				gasstation_signer.private
+			).then((purchaseGasTx) => {
+				// and throws it in the Tx pool
+				localWeb3.eth.sendSignedTransaction(purchaseGasTx.tx).on('receipt', (receipt) => {
+					console.log('purchase gas - tx sent', receipt);
+					assert.fail('this TX should throw..');
+				}).on('error', (err) => {
+					done();
+				});
 			});
 		});
 
@@ -370,6 +392,66 @@ contract('Token Setup', function(accounts) {
 			});
 		});
 	});
+
+
+	describe('test transaction on gasstation with insuficcient token balance', function() {
+
+		let offer = {};
+
+		var approvaltx;
+
+
+		it("client should be able to sign off on the offer of gas/token ( even without haveing enough tokens )", (done) => {
+			Promise.all([
+				localWeb3.eth.getBlockNumber(),
+			]).then((blockNumber) => {
+
+				offer.valid_until = blockNumber + 10;
+
+				offer.gasOffer = _gasTake; // minus the extimate of the TX pushfill
+
+				console.log('The deal is: receive ', offer.gasOffer, 'Wei in exchange for ', _tokensGive.toString(10), 'ERC20 token units');
+
+				// client signs off on these parameters
+				offer.clientSig = gasstationlib.signGastankParameters(
+					sampleERC20Token.address,
+					gasStationInstance.address,
+					_tokensGive,
+					offer.gasOffer,
+					offer.valid_until,
+					gasstation_client.private)
+				console.log('clientSig =>', offer.clientSig, 'valid_until=', offer.valid_until);
+				done();
+			});
+		});
+
+		it("gasstation-signer should not be able to execute the same purchaseGas Tx because of insufficient tokens", (done) => {
+			// server creates & signs purchaseGas Tx
+			gasstationlib.getPurchaseGastx(
+				sampleERC20Token.address,
+				gasstation_client.public,
+				offer.valid_until,
+				_tokensGive,
+				offer.gasOffer,
+				gasStationInstance.address,
+				offer.clientSig.v,
+				offer.clientSig.r,
+				offer.clientSig.s,
+				gasstation_signer.public,
+				gasstation_signer.private
+			).then((purchaseGasTx) => {
+				// and throws it in the Tx pool
+				localWeb3.eth.sendSignedTransaction(purchaseGasTx.tx).on('receipt', (receipt) => {
+					console.log('purchase gas - tx sent', receipt);
+					assert.fail('this TX should throw..');
+				}).on('error', (err) => {
+					done();
+				});
+			});
+		});
+
+	});
+
 
 	describe('clean up gasstation', function() {
 
