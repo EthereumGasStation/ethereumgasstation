@@ -12,27 +12,27 @@ contract('Token Setup', function(accounts) {
 
 	// create some random ethereum keypairs
 	function mkkeypair() {
-		var dk = keythereum.create();
-		var keyObject = keythereum.dump("none", dk.privateKey, dk.salt, dk.iv);
+		let dk = keythereum.create();
+		let keyObject = keythereum.dump("none", dk.privateKey, dk.salt, dk.iv);
 		return ({
 			private: dk.privateKey.toString('hex'),
 			public: ethUtil.addHexPrefix(keyObject.address)
 		});
 	}
 
-	var randomkeys = [];
+	let randomkeys = [];
 
-	for (var i = 0; i < 3; i++) {
+	for (let i = 0; i < 3; i++) {
 		randomkeys.push(mkkeypair());
 	}
 
 	// the indexes of these keys represent these persona :
 
 	// gasstation client = selling tokens for gas
-	var gasstation_client = randomkeys[0];
+	let gasstation_client = randomkeys[0];
 
 	// the owner of the gasstation smart contract (who receives tokens & withdraws ETH )
-	var gasstation_owner = accounts[2];
+	let gasstation_owner = accounts[2];
 
 	// any other account - to check if they can't perform privileged functions
 	let unknown_account = accounts[3];
@@ -40,22 +40,25 @@ contract('Token Setup', function(accounts) {
 
 	// the signer account who signs off on exchange rates via the API
 	// ( this user cannot withdraw tokens or ETH )
-	var gasstation_signer = randomkeys[1];
+	let gasstation_signer = randomkeys[1];
 
 	// new signer account - to test changing of changeGasStationSigner
 	let gasstation_signer2 = accounts[4];
 
+	// an account with nonce 0 , but ETH
+	let unused_account = accounts[5];
 
 
-	var sampleERC20Token;
-	var gasStationInstance;
+
+	let sampleERC20Token;
+	let gasStationInstance;
 
 
 	// parameters for this test
 	const _gasTake = new localWeb3.utils.BN("9081200000000000");
 	const _tokensGive = _gasTake.mul(new localWeb3.utils.BN(2)); // 2 is the price ratio here.. 1 Wei = 2 units of token
 
-	const gasstationlib = require('../gasstationlib.js')({
+	const gasstationlib = require('../lib/gasstationlib.js')({
 		currentProvider: web3.currentProvider
 	});
 
@@ -79,7 +82,7 @@ contract('Token Setup', function(accounts) {
 		});
 
 		it("should send ETH to the gasstation_signer (" + gasstation_signer.public + ")", (done) => {
-			var p = {
+			let p = {
 				from: accounts[0],
 				to: gasstation_signer.public,
 				value: localWeb3.utils.toWei("1", "ether")
@@ -101,16 +104,6 @@ contract('Token Setup', function(accounts) {
 				done();
 			});
 		});
-
-		// it("should change ownership of gasStation-contract to the gasstation_owner", (done) => {
-		// 	gasStationInstance.transferOwnership(gasstation_owner.public, {
-		// 		gas: 4700000,
-		// 		from: gasstation_owner
-		// 	}).then(() => {
-
-		// 		done();
-		// 	});
-		// });
 
 		// gasstation contract should have some ETH.
 		it("should be able to fund/refill the gasStation", (done) => {
@@ -154,25 +147,11 @@ contract('Token Setup', function(accounts) {
 				done();
 			});
 		});
-
-		// it("should print instructions", (done) => {
-		// 	console.log('----------------------------------------------------');
-		// 	console.log('-----------------STEP 1-----------------------------');
-		// 	console.log('put in frontend/index.html -> gs-client attribute');
-		// 	console.log('erc20="' + sampleERC20Token.address + '"');
-		// 	console.log('-----------------STEP 2-----------------------------');
-		// 	console.log('put in file .env');
-		// 	console.log('gastankaddress=\'' + gasStationInstance.address + '\'');
-		// 	console.log('erc20token=\'' + sampleERC20Token.address + '\'');
-		// 	console.log('----------------------------------------------------');
-		// 	done();
-
-		// });
 	});
 
 	describe('test transaction on gasstation - happy flow', function() {
 
-		var approvaltx;
+		let approvaltx;
 
 		it("should create getapproval TX", (done) => {
 
@@ -181,15 +160,14 @@ contract('Token Setup', function(accounts) {
 				gasstation_client.private,
 				sampleERC20Token.address,
 				_tokensGive,
-				gasStationInstance.address,
-				web3.currentProvider
+				gasStationInstance.address
 			).then((res) => {
 				console.log('res=', res);
 
 				// save approval transaction object for later.
 				approvaltx = res;
 
-				console.log('approvaltx cost in Wei =', res.gasLimit * res.gasPrice);
+				console.log('approvaltx cost in Wei =', res.cost);
 
 				done();
 
@@ -264,8 +242,8 @@ contract('Token Setup', function(accounts) {
 		});
 
 		it("gasstation-client should have an allowance", (done) => {
-			var allowance_from = gasstation_client.public;
-			var allowance_to = gasStationInstance.address;
+			let allowance_from = gasstation_client.public;
+			let allowance_to = gasStationInstance.address;
 			console.log('check allowance -> from=', allowance_from, 'to=', allowance_to);
 			sampleERC20Token.allowance.call(allowance_from, allowance_to).then(function(allowance) {
 				console.log('allowance=', allowance.toNumber(10));
@@ -337,6 +315,7 @@ contract('Token Setup', function(accounts) {
 			).then((purchaseGasTx) => {
 				// and throws it in the Tx pool
 				localWeb3.eth.sendSignedTransaction(purchaseGasTx.tx).on('receipt', (receipt) => {
+					console.log(receipt);
 					done();
 				});
 			});
@@ -398,7 +377,7 @@ contract('Token Setup', function(accounts) {
 
 		let offer = {};
 
-		var approvaltx;
+		let approvaltx;
 
 		it("client should be able to sign off on the offer of gas/token ( even without haveing enough tokens )", (done) => {
 			Promise.all([
@@ -504,5 +483,76 @@ contract('Token Setup', function(accounts) {
 				done();
 			});
 		});
+	});
+
+
+	describe('checkPrerequisites tests', function() {
+		it("a non-empty (ETH) account can not be a valid client", (done) => {
+			gasstationlib.checkPrerequisites(unused_account)
+				.then(() => {
+					assert.fail(null, null, 'this function should throw');
+				})
+				.catch((err) => {
+					console.log(err);
+					assert.equal(err.code, gasstationlib.errorCodes.ACCOUNT_IS_NOT_EMPTY);
+					done();
+				});
+		});
+
+		it("an empty account with a nonce > 0 can not be a valid client", (done) => {
+			Promise.all([
+				localWeb3.eth.getGasPrice(),
+				localWeb3.eth.getBalance(unused_account),
+			]).then(([gasprice, ethbalance]) => {
+				// transfer all it's ETH to another account.
+				let ethBalanceBN = new localWeb3.utils.BN(ethbalance);
+				let stdPriceBN = new localWeb3.utils.BN("21000");
+				let gasPriceBN = new localWeb3.utils.BN(gasprice);
+				console.log('stdPrice', stdPriceBN.toString(10));
+				console.log('gasPrice', gasPriceBN.toString(10));
+				let txCostBN = stdPriceBN.mul(gasPriceBN);
+				console.log('txCost', txCostBN.toString(10));
+				let p = {
+					from: unused_account,
+					to: accounts[2], // this could be any account really
+					value: ethBalanceBN.sub(txCostBN),
+					gas: stdPriceBN,
+					gasPrice: gasPriceBN,
+				};
+				console.log(p);
+				localWeb3.eth.sendTransaction(p, (err) => {
+					assert.isNull(err);
+
+					Promise.all([
+						localWeb3.eth.getBalance(unused_account),
+						localWeb3.eth.getTransactionCount(unused_account),
+					]).then(([balance, txCount]) => {
+
+						console.log('txcount=', txCount);
+
+						// ok the account is empty - has a nonce > 0
+						// this account should be invalid.
+						gasstationlib.checkPrerequisites(unused_account).then(() => {
+							assert.fail(null, null, 'this function should throw');
+						}).catch((err) => {
+							console.log(err);
+							assert.equal(err.code, gasstationlib.errorCodes.ACCOUNT_IS_NOT_UNUSED);
+							done();
+						});
+					});
+				})
+			});
+		});
+
+		it("an smart contract can not be a valid client", (done) => {
+			gasstationlib.checkPrerequisites(gasStationInstance.address).then(() => {
+				assert.fail(null, null, 'this function should throw');
+			}).catch((err) => {
+				assert.equal(err.code, gasstationlib.errorCodes.ACCOUNT_IS_CONTRACT);
+				done();
+			});
+		});
+
+
 	});
 });

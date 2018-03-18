@@ -7,7 +7,8 @@
     "test": "test"
   },
   "scripts": {
-    "coverage": "node_modules/.bin/solidity-coverage"
+    "coverage": "node_modules/.bin/solidity-coverage",
+    "test": "mocha lib/test/* --exit && truffle test"
   },
   "author": "",
   "license": "ISC",
@@ -15,12 +16,17 @@
     "ethereumjs-tx": "^1.3.4",
     "js-sha256": "^0.9.0",
     "keythereum": "^1.0.2",
+    "memory-cache": "^0.2.0",
+    "request": "^2.85.0",
+    "request-promise": "^4.2.2",
     "web3": "1.0.0-beta.29",
     "zeppelin-solidity": "^1.7.0"
   },
   "devDependencies": {
+    "chai": "^4.1.2",
     "coveralls": "^3.0.0",
     "ganache-cli": "^6.1.0",
+    "mocha": "^5.0.4",
     "solidity-coverage": "^0.4.14",
     "truffle": "^4.1.3"
   }
