@@ -1,8 +1,7 @@
 {
-  "name": "gsc",
-  "version": "1.0.0",
-  "description": "Gasstation contracts",
-  "main": "index.js",
+  "name": "ethereumgasstation",
+  "version": "0.0.1",
+  "description": "Gasstation contracts & helper libraries",
   "directories": {
     "test": "test"
   },
@@ -10,8 +9,12 @@
     "coverage": "node_modules/.bin/solidity-coverage",
     "test": "mocha lib/test/* --exit && truffle test"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "sponnet",
+  "license": "MIT",
+  "keywords": [
+    "Solidity",
+    "Ethereum"
+  ],
   "dependencies": {
     "ethereumjs-tx": "^1.3.4",
     "js-sha256": "^0.9.0",
