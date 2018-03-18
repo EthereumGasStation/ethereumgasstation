@@ -9,6 +9,6 @@ cache:
 install:
   - npm install
 script:
-  - truffle test 
-after_success:
-  - npm run coverage
+  - truffle test
+after_script:
+  - npm run coverage && cat coverage/lcov.info | coveralls
