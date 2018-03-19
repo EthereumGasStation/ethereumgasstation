@@ -555,4 +555,13 @@ contract('Token Setup', function(accounts) {
 
 
 	});
+
+	describe('gasstationLib tests', function() {
+		it("private to public key derivation should work.", (done) => {
+			let pubKey = gasstationlib.privateToAddress('12ed1823ef1c2702b69d44aae3e4beeab8ac3b3d8668e41edbc42e871f1933b2')
+			assert.equal(pubKey, '0x4355c23c8209d13b2a92be5fcca6951a83aa4866');
+			done();
+		});
+	});
+
 });
