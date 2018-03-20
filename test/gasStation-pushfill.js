@@ -42,7 +42,7 @@ contract('Token Setup', function(accounts) {
 	// ( this user cannot withdraw tokens or ETH )
 	let gasstation_signer = randomkeys[1];
 
-	// new signer account - to test changing of changeGasStationSigner
+	// new signer account - to test changing of setParameters
 	let gasstation_signer2 = accounts[4];
 
 	// an account with nonce 0 , but ETH
@@ -52,6 +52,9 @@ contract('Token Setup', function(accounts) {
 
 	let sampleERC20Token;
 	let gasStationInstance;
+
+	// max gas a time
+	const maxGas = "10000000000000000";
 
 
 	// parameters for this test
@@ -95,7 +98,7 @@ contract('Token Setup', function(accounts) {
 
 	describe('gasStation setup', () => {
 		it("should deploy a gasStation-contract", (done) => {
-			gasStation.new(gasstation_signer.public, {
+			gasStation.new(gasstation_signer.public,maxGas, {
 				gas: 4700000,
 				from: gasstation_owner
 			}).then((instance) => {
@@ -466,7 +469,7 @@ contract('Token Setup', function(accounts) {
 		});
 
 		it("gasstation_owner should be able to assign a different signer", (done) => {
-			gasStationInstance.changeGasStationSigner(gasstation_signer2, {
+			gasStationInstance.setParameters(gasstation_signer2,maxGas, {
 				from: gasstation_owner,
 			}).then(function() {
 				done();

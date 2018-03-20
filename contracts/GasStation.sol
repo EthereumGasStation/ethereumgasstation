@@ -7,10 +7,11 @@ contract GasStation is Ownable {
 	// track used fillup hashes
 	mapping(bytes32=>bool) usedhashes;
 	address public gasStationSigner;
+	uint256 public maxGas;
 
 	// constructor
-	function GasStation(address _gasStationSigner) payable public {
-		gasStationSigner = _gasStationSigner;
+	function GasStation(address _gasStationSigner,uint256 _maxGas) payable public {
+		setParameters(_gasStationSigner,_maxGas);
 	}
 
 	// default function
@@ -24,6 +25,8 @@ contract GasStation is Ownable {
 			&& (msg.sender == gasStationSigner)
 			&& (ecrecover(hash, _v, _r, _s) == _client)
 			&& (block.number <= _validUntil) 
+			&& (_gasAmount <= maxGas)
+			&& (_tokenAmount > 0)
 		);
 		// invalidate this deal's hash
 		usedhashes[hash] = true;
@@ -34,8 +37,9 @@ contract GasStation is Ownable {
 		_client.transfer(_gasAmount);
 	}
 
-	function changeGasStationSigner(address _newgasStationSigner) onlyOwner public {
-		gasStationSigner = _newgasStationSigner;
+	function setParameters(address _gasStationSigner,uint256 _maxGas) onlyOwner public {
+		gasStationSigner = _gasStationSigner;
+		maxGas = _maxGas;
 	}
 
 	function withdrawETH() onlyOwner public {
