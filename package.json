@@ -1,6 +1,6 @@
 {
   "name": "ethereumgasstation",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Gasstation contracts & helper libraries",
   "directories": {
     "test": "test"
