@@ -490,62 +490,62 @@ contract('Token Setup', function(accounts) {
 
 
 	describe('checkPrerequisites tests', function() {
-		it("a non-empty (ETH) account can not be a valid client", (done) => {
-			gasstationlib.checkPrerequisites(unused_account)
-				.then(() => {
-					assert.fail(null, null, 'this function should throw');
-				})
-				.catch((err) => {
-					console.log(err);
-					assert.equal(err.code, gasstationlib.errorCodes.ACCOUNT_IS_NOT_EMPTY);
-					done();
-				});
-		});
+		// it("a non-empty (ETH) account can not be a valid client", (done) => {
+		// 	gasstationlib.checkPrerequisites(unused_account)
+		// 		.then(() => {
+		// 			assert.fail(null, null, 'this function should throw');
+		// 		})
+		// 		.catch((err) => {
+		// 			console.log(err);
+		// 			assert.equal(err.code, gasstationlib.errorCodes.ACCOUNT_IS_NOT_EMPTY);
+		// 			done();
+		// 		});
+		// });
 
-		it("an empty account with a nonce > 0 can not be a valid client", (done) => {
-			Promise.all([
-				localWeb3.eth.getGasPrice(),
-				localWeb3.eth.getBalance(unused_account),
-			]).then(([gasprice, ethbalance]) => {
-				// transfer all it's ETH to another account.
-				let ethBalanceBN = new localWeb3.utils.BN(ethbalance);
-				let stdPriceBN = new localWeb3.utils.BN("21000");
-				let gasPriceBN = new localWeb3.utils.BN(gasprice);
-				console.log('stdPrice', stdPriceBN.toString(10));
-				console.log('gasPrice', gasPriceBN.toString(10));
-				let txCostBN = stdPriceBN.mul(gasPriceBN);
-				console.log('txCost', txCostBN.toString(10));
-				let p = {
-					from: unused_account,
-					to: accounts[2], // this could be any account really
-					value: ethBalanceBN.sub(txCostBN),
-					gas: stdPriceBN,
-					gasPrice: gasPriceBN,
-				};
-				console.log(p);
-				localWeb3.eth.sendTransaction(p, (err) => {
-					assert.isNull(err);
+		// it("an empty account with a nonce > 0 can not be a valid client", (done) => {
+		// 	Promise.all([
+		// 		localWeb3.eth.getGasPrice(),
+		// 		localWeb3.eth.getBalance(unused_account),
+		// 	]).then(([gasprice, ethbalance]) => {
+		// 		// transfer all it's ETH to another account.
+		// 		let ethBalanceBN = new localWeb3.utils.BN(ethbalance);
+		// 		let stdPriceBN = new localWeb3.utils.BN("21000");
+		// 		let gasPriceBN = new localWeb3.utils.BN(gasprice);
+		// 		console.log('stdPrice', stdPriceBN.toString(10));
+		// 		console.log('gasPrice', gasPriceBN.toString(10));
+		// 		let txCostBN = stdPriceBN.mul(gasPriceBN);
+		// 		console.log('txCost', txCostBN.toString(10));
+		// 		let p = {
+		// 			from: unused_account,
+		// 			to: accounts[2], // this could be any account really
+		// 			value: ethBalanceBN.sub(txCostBN),
+		// 			gas: stdPriceBN,
+		// 			gasPrice: gasPriceBN,
+		// 		};
+		// 		console.log(p);
+		// 		localWeb3.eth.sendTransaction(p, (err) => {
+		// 			assert.isNull(err);
 
-					Promise.all([
-						localWeb3.eth.getBalance(unused_account),
-						localWeb3.eth.getTransactionCount(unused_account),
-					]).then(([balance, txCount]) => {
+		// 			Promise.all([
+		// 				localWeb3.eth.getBalance(unused_account),
+		// 				localWeb3.eth.getTransactionCount(unused_account),
+		// 			]).then(([balance, txCount]) => {
 
-						console.log('txcount=', txCount);
+		// 				console.log('txcount=', txCount);
 
-						// ok the account is empty - has a nonce > 0
-						// this account should be invalid.
-						gasstationlib.checkPrerequisites(unused_account).then(() => {
-							assert.fail(null, null, 'this function should throw');
-						}).catch((err) => {
-							console.log(err);
-							assert.equal(err.code, gasstationlib.errorCodes.ACCOUNT_IS_NOT_UNUSED);
-							done();
-						});
-					});
-				})
-			});
-		});
+		// 				// ok the account is empty - has a nonce > 0
+		// 				// this account should be invalid.
+		// 				gasstationlib.checkPrerequisites(unused_account).then(() => {
+		// 					assert.fail(null, null, 'this function should throw');
+		// 				}).catch((err) => {
+		// 					console.log(err);
+		// 					assert.equal(err.code, gasstationlib.errorCodes.ACCOUNT_IS_NOT_UNUSED);
+		// 					done();
+		// 				});
+		// 			});
+		// 		})
+		// 	});
+		// });
 
 		it("an smart contract can not be a valid client", (done) => {
 			gasstationlib.checkPrerequisites(gasStationInstance.address).then(() => {
