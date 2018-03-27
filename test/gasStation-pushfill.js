@@ -156,9 +156,9 @@ contract('Token Setup', function(accounts) {
 
 		let approvaltx;
 
-		it("should create getapproval TX", (done) => {
+		it("should create getApprovalTx TX", (done) => {
 
-			gasstationlib.getapprovaltx(
+			gasstationlib.getApprovalTx(
 				gasstation_client.public,
 				gasstation_client.private,
 				sampleERC20Token.address,
@@ -303,7 +303,7 @@ contract('Token Setup', function(accounts) {
 
 		it("gasstation-signer should be able to execute purchaseGas Tx", (done) => {
 			// server creates & signs purchaseGas Tx
-			gasstationlib.getPurchaseGastx(
+			gasstationlib.getPurchaseGasTx(
 				sampleERC20Token.address,
 				gasstation_client.public,
 				offer.valid_until,
@@ -326,7 +326,7 @@ contract('Token Setup', function(accounts) {
 
 		it("gasstation-signer should not be able to execute the same purchaseGas Tx again", (done) => {
 			// server creates & signs purchaseGas Tx
-			gasstationlib.getPurchaseGastx(
+			gasstationlib.getPurchaseGasTx(
 				sampleERC20Token.address,
 				gasstation_client.public,
 				offer.valid_until,
@@ -382,7 +382,7 @@ contract('Token Setup', function(accounts) {
 
 		let approvaltx;
 
-		it("client should be able to sign off on the offer of gas/token ( even without haveing enough tokens )", (done) => {
+		it("client should be able to sign off on the offer of gas/token ( even without having enough tokens )", (done) => {
 			Promise.all([
 				localWeb3.eth.getBlockNumber(),
 			]).then((blockNumber) => {
@@ -408,7 +408,7 @@ contract('Token Setup', function(accounts) {
 
 		it("gasstation-signer should not be able to execute the same purchaseGas Tx because of insufficient tokens", (done) => {
 			// server creates & signs purchaseGas Tx
-			gasstationlib.getPurchaseGastx(
+			gasstationlib.getPurchaseGasTx(
 				sampleERC20Token.address,
 				gasstation_client.public,
 				offer.valid_until,
