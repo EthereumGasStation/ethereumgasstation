@@ -1,20 +1,24 @@
-.. Ethereum Gasstation documentation master file, created by
-   sphinx-quickstart on Tue Apr 10 11:49:11 2018.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
 
-Welcome to Ethereum Gasstation's documentation!
-===============================================
+=================================
+Ethereum Gasstation - exchange ERC20 tokens for gas
+=================================
+
+Ethereum Gasstation is a library and accompanying webservice that allows you to run a gasstation.
+
+
+Contents:
+
+:ref:`Keyword Index <genindex>`, :ref:`Search Page <search>`
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Library reference
 
+   gasstationlib
 
+.. toctree::
+    :maxdepth: 2
+    :caption: API reference
 
-Indices and tables
-==================
+    installing
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
