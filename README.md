@@ -62,8 +62,8 @@ Now the deployed gasstation address is shown (`0x8393249596b812af26fa128d15202e4
 
 ## Put some ETH on your accounts
 
-* Put some ETH on the gasstation contract (this will be the gas that is sold to your clients).
-* Put some ETH on the signer address (this account will send the upfront gas & execute the transactions on behalf of the client)
+* Put some ETH on the gasstation contract (ex. 1 ETH - this will be the gas that is sold to your clients).
+* Put some ETH on the signer address (ex. 0.5 ETH - this account will send the upfront gas & execute the transactions on behalf of the client)
 
 ( again if you're on Ropsten - use the faucet )
 
@@ -71,7 +71,14 @@ Now the deployed gasstation address is shown (`0x8393249596b812af26fa128d15202e4
 
 Your gasstation contract and accounts are now ready to go.
 
+The blockchain part is done.
 
+Now lease proceed to the https://github.com/EthereumGasStation/ethereumgasstationserver to set up your gasstation server.
+
+
+## Maintaining your gasstation
+
+TODO
 
 
 
