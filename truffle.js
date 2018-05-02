@@ -1,4 +1,25 @@
+const PrivateKeyProvider = require("truffle-privatekey-provider");
+const fs = require('fs');
+const path = require('path');
+const ownerfilename = path.join(__dirname, 'gasstationowner.json');
+
+function getNetworks() {
+	var gasstationOwnerAccount = null;
+	if (fs.existsSync(ownerfilename)) {
+		gasstationOwnerAccount = require(ownerfilename);
+	}
+	return ({
+		ropsten: {
+			provider: gasstationOwnerAccount ? new PrivateKeyProvider(gasstationOwnerAccount.private, "https://ropsten.infura.io/") : null,
+			network_id: 3
+		},
+		mainnet: {
+			provider: gasstationOwnerAccount ? new PrivateKeyProvider(gasstationOwnerAccount.private, "https://ropsten.infura.io/") : null,
+			network_id: 1
+		},
+	});
+}
+
 module.exports = {
-  // See <http://truffleframework.com/docs/advanced/configuration>
-  // to customize your Truffle configuration!
+	networks: getNetworks()
 };
