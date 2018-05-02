@@ -5,7 +5,7 @@
 gasstationlib
 =============
 
-The ``gasstationlib`` allows you to easily create the required data for posting gas-requests to a gasstation.
+The ``gasstationlib`` allows you to easily create the required data for posting gas-requests to a gasstation REST API.
 
 
 ------------------------------------------------------------------------------

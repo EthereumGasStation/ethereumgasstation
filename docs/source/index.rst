@@ -14,8 +14,8 @@ Ethereum Gasstation is a library and accompanying webservice that allows you to 
    gasstationlib
 
 .. toctree::
-    :maxdepth: 2
-    :caption: API reference
+   :maxdepth: 2
+   :caption: API reference
 
-    installing
+   api
 
