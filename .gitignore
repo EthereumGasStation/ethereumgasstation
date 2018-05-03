@@ -1,3 +1,5 @@
 /contracts/GasStation-flat.sol
 /coverage
 /coverage.json
+/gasstationsigner.json
+/gasstationowner.json

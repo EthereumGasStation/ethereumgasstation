@@ -9,6 +9,11 @@ function getNetworks() {
 		gasstationOwnerAccount = require(ownerfilename);
 	}
 	return ({
+		development: {
+			host: "localhost",
+			port: 8545,
+			network_id: "*" // Match any network id
+		},
 		ropsten: {
 			provider: gasstationOwnerAccount ? new PrivateKeyProvider(gasstationOwnerAccount.private, "https://ropsten.infura.io/") : null,
 			network_id: 3
