@@ -1,8 +1,8 @@
-const ERC20 = artifacts.require('SampleToken.sol');
-const ethUtil = require("ethereumjs-util");
-const EthereumTx = require("ethereumjs-tx");
-const keythereum = require('keythereum');
-const Web3 = require('web3');
+// const ERC20 = artifacts.require('SampleToken.sol');
+// const ethUtil = require("ethereumjs-util");
+// const EthereumTx = require("ethereumjs-tx");
+// const keythereum = require('keythereum');
+// const Web3 = require('web3');
 
 
 contract('Token Setup', function(accounts) {

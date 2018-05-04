@@ -7,11 +7,11 @@ module.exports = (amount) => {
 	let keys = [];
 	for (let i = 0; i < amount; i++) {
 		let dk = keythereum.create();
-		let keyObject = keythereum.dump("none", dk.privateKey, dk.salt, dk.iv);
+		let keyObject = keythereum.dump('none', dk.privateKey, dk.salt, dk.iv);
 		keys.push({
 			private: dk.privateKey.toString('hex'),
-			public: ethUtil.addHexPrefix(keyObject.address)
+			public: ethUtil.addHexPrefix(keyObject.address),
 		});
 	}
 	return (keys);
-}
+};

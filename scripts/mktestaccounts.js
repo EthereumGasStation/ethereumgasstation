@@ -13,4 +13,4 @@ module.exports = function(callback) {
 		console.log('Done. Written test accounts to', testaccountsfilename);
 	}
 	callback();
-}
+};

@@ -1,0 +1,8 @@
+*.min.js
+*.config.js
+truffle.js
+test
+migrations
+coverage
+docs
+scripts

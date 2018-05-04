@@ -20,4 +20,4 @@ module.exports = function(callback) {
 		console.log('signer=', accounts.signer.public);
 	}
 	callback();
-}
+};
