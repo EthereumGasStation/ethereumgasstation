@@ -16,15 +16,23 @@ function getNetworks() {
 		},
 		ropsten: {
 			provider: gasstationOwnerAccount ? new PrivateKeyProvider(gasstationOwnerAccount.private, "https://ropsten.infura.io/") : null,
-			network_id: 3
+			network_id: 3,
+			gas: 1828127,
 		},
 		mainnet: {
 			provider: gasstationOwnerAccount ? new PrivateKeyProvider(gasstationOwnerAccount.private, "https://ropsten.infura.io/") : null,
-			network_id: 1
+			network_id: 1,
+			gas: 1828127,
 		},
 	});
 }
 
 module.exports = {
-	networks: getNetworks()
+	networks: getNetworks(),
+	solc: {
+		optimizer: {
+			enabled: true,
+			runs: 200
+		}
+	},
 };

@@ -18,8 +18,7 @@ module.exports = function(deployer, network, accounts) {
 		console.log('signer address =', signerAddress);
 		console.log('maxgas =', maxGas);
 		deployer.deploy(GasStation, signerAddress, maxGas, {
-			//gasprice: 1e6,
-			gas: 4600000,
+			gas: 2000000,
 			from: accounts[0]
 		});
 	}
