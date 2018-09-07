@@ -18,24 +18,24 @@
     "Ethereum"
   ],
   "dependencies": {
-    "ethereumjs-tx": "^1.3.4",
+    "ethereumjs-tx": "^1.3.7",
     "ethereumjs-util": "^5.2.0",
     "js-sha256": "^0.9.0",
-    "keythereum": "^1.0.3",
+    "keythereum": "^1.0.4",
     "memory-cache": "^0.2.0",
-    "request": "^2.85.0",
+    "openzeppelin-solidity": "^1.12.0",
+    "request": "^2.88.0",
     "request-promise": "^4.2.2",
-    "truffle-privatekey-provider": "0.0.6",
-    "web3": "1.0.0-beta.29",
-    "zeppelin-solidity": "^1.7.0"
+    "truffle-privatekey-provider": "0.1.0",
+    "web3": "1.0.0-beta.36"
   },
   "devDependencies": {
-    "browserify": "^16.1.1",
+    "browserify": "^16.2.2",
     "chai": "^4.1.2",
-    "coveralls": "^3.0.0",
-    "ganache-cli": "^6.1.0",
-    "mocha": "^5.0.4",
-    "solidity-coverage": "^0.4.14",
-    "truffle": "^4.1.3"
+    "coveralls": "^3.0.2",
+    "ganache-cli": "^6.1.8",
+    "mocha": "^5.2.0",
+    "solidity-coverage": "^0.5.11",
+    "truffle": "^4.1.14"
   }
 }
