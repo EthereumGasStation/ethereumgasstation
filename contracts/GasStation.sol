@@ -1,7 +1,7 @@
 pragma solidity ^0.4.19;
 
-import 'zeppelin-solidity/contracts/token/ERC20/ERC20.sol';
-import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
+import 'openzeppelin-solidity/contracts/token/ERC20/ERC20.sol';
+import 'openzeppelin-solidity/contracts/ownership/Ownable.sol';
 
 contract GasStation is Ownable {
 	// track used fillup hashes
@@ -10,7 +10,7 @@ contract GasStation is Ownable {
 	uint256 public maxGas;
 
 	// constructor
-	function GasStation(address _gasStationSigner,uint256 _maxGas) payable public {
+	constructor (address _gasStationSigner,uint256 _maxGas) payable public {
 		setParameters(_gasStationSigner,_maxGas);
 	}
 
@@ -19,7 +19,7 @@ contract GasStation is Ownable {
 
 	// swap tokens for gas
 	function purchaseGas(address _tokenAddress, address _client, uint _validUntil, uint _tokenAmount, uint _gasAmount, uint8 _v, bytes32 _r, bytes32 _s) public {
-		bytes32 hash = sha256(_tokenAddress, this, _tokenAmount, _gasAmount, _validUntil);
+		bytes32 hash = sha256(abi.encodePacked(_tokenAddress, this, _tokenAmount, _gasAmount, _validUntil));
 		require(
 			(usedhashes[hash] != true)
 			&& (msg.sender == gasStationSigner)
@@ -43,6 +43,6 @@ contract GasStation is Ownable {
 	}
 
 	function withdrawETH() onlyOwner public {
-		owner.transfer(this.balance);
+		owner.transfer(address(this).balance);
 	}
 }

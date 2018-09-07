@@ -1,6 +1,6 @@
 pragma solidity ^0.4.19;
 
-import 'zeppelin-solidity/contracts/token/ERC20/MintableToken.sol';
+import 'openzeppelin-solidity/contracts/token/ERC20/MintableToken.sol';
 
 contract SampleToken is MintableToken {
   string public constant name = "Sample Token";
